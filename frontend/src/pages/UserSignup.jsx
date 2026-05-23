@@ -11,12 +11,12 @@ const UserSignup = () => {
   const [ password, setPassword ] = useState('')
   const [ firstName, setFirstName ] = useState('')
   const [ lastName, setLastName ] = useState('')
-  const [ userData, setUserData ] = useState({})
+  // const [ userData, setUserData ] = useState({})
 
  
 const navigate = useNavigate()
 
-const {user, setUser } = React.useContext(UserDataContext)
+// const {user, setUser } = React.useContext(UserDataContext)
 
 
 
@@ -33,11 +33,16 @@ const {user, setUser } = React.useContext(UserDataContext)
     }
     
 
+// Add this above your axios call to check the value
+console.log("Base URL:", import.meta.env.VITE_BASE_URL)
+
+
+
     const response = await axios.post(`${import.meta.env.VITE_BASE_URL}/users/register`, newUser)
 
     if (response.status === 201) {
       const data = response.data
-      setUser(data.user)
+      // setUser(data.user)
       localStorage.setItem('token', data.token)
       navigate('/home')
     }
