@@ -12,11 +12,14 @@ import UserLogout from './pages/UserLogout'
 import CaptainHome from './pages/CaptainHome'
 import CaptainProtectWrapper from './pages/CaptainProtectWrapper'
 import CaptainRiding from './pages/CaptainRiding'
+import VerifyOtp from './pages/verifyOtp'
+
 const App = () => {
  
   return (
     <div className='text-black'>
       <Routes >
+        <Route path="/verify-otp" element={<VerifyOtp />} />
         <Route path='/' element={<Start/>} />
         <Route path='/login' element={<UserLogin/>} />
         <Route path='/riding' element={<Riding/>} />

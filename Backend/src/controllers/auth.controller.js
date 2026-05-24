@@ -208,7 +208,7 @@ async function login(req, res) {
 
         const refreshToken = jwt.sign(
             { id: user._id, sessionId: session._id },
-            config.REFRESH_TOKEN_SECRETE,
+            config.JWT_REFRESH_TOKEN,
             { expiresIn: '7d' }
         );
 
@@ -219,7 +219,7 @@ async function login(req, res) {
 
         const accessToken = jwt.sign(
             { id: user._id },
-            config.ACCESS_TOKEN_SECRETE,
+            config.JWT_ACCESS_TOKEN,
             { expiresIn: '15m' }
         );
 
@@ -245,6 +245,10 @@ async function login(req, res) {
     }
 }
 
+async function  getUserProfile(req, res,next) {
+    res.status(200).json(req.user);
+    
+}
 async function getMe(req, res) {
     const token = req.headers.authorization?.split(" ")[1];
 
@@ -513,7 +517,8 @@ module.exports = {
     RefreshToken,
     logout,
     logoutAll,
-    verifyEmail
+    verifyEmail,
+    getUserProfile
 }
 
 
