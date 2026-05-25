@@ -10,7 +10,6 @@
 //     body('password').isLength({ min: 6 }).withMessage('Password must be at least 6 characters long'),
 // ],userController.registerUser);
 
-
 // router.post('/login',[
 //     body('email').isEmail().withMessage('Invalid email format'),
 //     body('password').notEmpty().withMessage('Password is required'),
@@ -21,29 +20,26 @@
 
 // module.exports=router;
 
+const { Router } = require('express');
+const authRouter = Router();
+const authController = require('../controllers/auth.controller');
 
+authRouter.post('/register', authController.register);
 
+authRouter.post('/login', authController.login);
 
+authRouter.get('/profile', authController.getUserProfile);
 
-const {Router} = require ('express')
-const authRouter=Router()
-const authController=require('../controllers/auth.controller')
+authRouter.get('/get-me', authController.getMe);
 
+authRouter.get('/refresh-token', authController.RefreshToken);
 
-authRouter.post('/register',authController.register)
+authRouter.post('/logout', authController.logout);
 
-authRouter.post('/login',authController.login)
+authRouter.post('/logout-all', authController.logoutAll);
 
-authRouter.get('/profile',authController.getUserProfile)
+authRouter.post('/verify-email', authController.verifyEmail);
 
-authRouter.get('/get-me',authController.getMe)
+authRouter.post('/resend-otp', authController.resendOtp);
 
-authRouter.get('/refresh-token',authController.RefreshToken)
-
-authRouter.post('/logout',authController.logout)
-
-authRouter.post('/logout-all',authController.logoutAll)
-
-authRouter.post('/verify-email',authController.verifyEmail)
-
-module.exports=authRouter
+module.exports = authRouter;

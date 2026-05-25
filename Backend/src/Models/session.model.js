@@ -1,35 +1,35 @@
-const mongoose=require('mongoose')
+const mongoose = require('mongoose');
 
-const sessionSchema=new mongoose.Schema({
-
-    user:{
-        type:mongoose.Schema.Types.ObjectId,
-        ref:'User',
-        required:[true,'User is required']},
-
-    ip:{
-        type:String,
-        required:[true,'IP is required']
-    },
-    userAgent:{
-        type:String,
-        required:[true,'User agent is required']
+const sessionSchema = new mongoose.Schema(
+  {
+    user: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: 'User',
+      required: [true, 'User is required'],
     },
 
-
-    refreshTokenHash:{
-        type:String,
-        required:[true,'Refresh token hash is required']
+    ip: {
+      type: String,
+      required: [true, 'IP is required'],
+    },
+    userAgent: {
+      type: String,
+      required: [true, 'User agent is required'],
     },
 
-    revoked:{
-        type:Boolean,
-        default:false
-    }
+    refreshTokenHash: {
+      type: String,
+      required: [true, 'Refresh token hash is required'],
+    },
 
+    revoked: {
+      type: Boolean,
+      default: false,
+    },
+  },
+  { timestamps: true }
+);
 
-},{timestamps:true})
+const sessionModel = mongoose.model('Session', sessionSchema);
 
-const sessionModel=mongoose.model('Session',sessionSchema)
-
-module.exports=sessionModel
+module.exports = sessionModel;

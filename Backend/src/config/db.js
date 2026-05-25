@@ -1,14 +1,13 @@
-const mongoose=require('mongoose')
-const config=require('./config')
+const mongoose = require('mongoose');
+const config = require('./config');
 
-async function coonectDB(){
- 
-    try{
-        await mongoose.connect(config.MONGO_DB_URI)
-        console.log('db connected')
-    }catch(err){
-        console.log(err)
-    }
+async function coonectDB() {
+  try {
+    await mongoose.connect(config.MONGO_DB_URI);
+    console.log('db connected');
+  } catch (err) {
+    console.log(err);
+  }
 }
 
-module.exports=coonectDB
+module.exports = coonectDB;

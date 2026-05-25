@@ -1,12 +1,11 @@
+const app = require('./src/app');
+const connectDB = require('./src/config/db');
+const dns = require('dns');
 
-const app=require('./src/app')
-const connectDB=require('./src/config/db')
-const dns=require('dns')
+dns.setServers(['1.1.1.1', '8.8.8.8']);
 
-dns.setServers(['1.1.1.1','8.8.8.8'])
+connectDB();
 
-connectDB()
-
-app.listen(5000,()=>{
-    console.log('server is running on port 5000')
-})
+app.listen(5000, () => {
+  console.log('server is running on port 5000');
+});
