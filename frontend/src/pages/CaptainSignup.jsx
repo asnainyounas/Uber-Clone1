@@ -48,7 +48,15 @@ const CaptainSignup = () => {
       setCaptain(data.captain);
       localStorage.setItem('token', data.token);
 
-      navigate('/captain-home');
+      localStorage.setItem(
+  'verifyData',
+  JSON.stringify({
+    email: data.captain.email,
+    role: 'captain'
+  })
+);
+
+navigate('/verify-otp');
     }
   } catch (error) {
     console.log('Status:', error.response?.status);

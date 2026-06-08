@@ -41,10 +41,16 @@ const UserSignup = () => {
     // }
 
     if (response.status === 201) {
-      localStorage.setItem('verifyEmail', response.data.user.email);
+     localStorage.setItem(
+  'verifyData',
+  JSON.stringify({
+    email: response.data.user.email,
+    role: 'user'
+  })
+);
 
-      navigate('/verify-otp');
-    }
+   navigate('/verify-otp');
+}
 
     setEmail('');
     setFirstName('');

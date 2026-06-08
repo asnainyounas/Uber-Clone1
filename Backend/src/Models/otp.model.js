@@ -7,11 +7,7 @@ const otpSchema = new mongoose.Schema({
         lowercase: true,  
         trim: true
     },
-    user: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: "User",
-        required: [true, "User is required"]
-    },
+   
     otpHash: {
         type: String,
         required: [true, "OTP hash is required"]
@@ -19,7 +15,17 @@ const otpSchema = new mongoose.Schema({
     expiresAt: {
         type: Date,
         default: () => new Date(Date.now() + 10 * 60 * 1000) // 10 minutes
-    }
+    },
+    ownerId: {
+  type: mongoose.Schema.Types.ObjectId,
+  required: true,
+},
+
+ownerType: {
+  type: String,
+  enum: ['User', 'Captain'],
+  required: true,
+}
 }, {
     timestamps: true
 })

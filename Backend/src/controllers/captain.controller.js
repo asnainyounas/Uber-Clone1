@@ -1,41 +1,83 @@
 const captainModel = require('../Models/captain.model');
 const captainService = require('../services/captain.service');
 const { validationResult } = require('express-validator');
+const bcrypt = require('bcryptjs');
+const otpModel = require('../Models/otp.model');
+const { sendEmail } = require('../services/email.service');
+const { generateOtp, getOtpHtml } = require('../utils/utils');
 
-module.exports.registerCaptain = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
-    return res.status(400).json({ errors: errors.array() });
+module.exports.registerCaptain = async (req, res) => {
+  try {
+    const errors = validationResult(req);
+
+    if (!errors.isEmpty()) {
+      return res.status(400).json({
+        errors: errors.array(),
+      });
+    }
+
+    const { fullname, email, password, vehicle } = req.body;
+
+    const emailLower = email.toLowerCase();
+
+    const existingCaptain = await captainModel.findOne({
+      email: emailLower,
+    });
+
+    if (existingCaptain) {
+      return res.status(409).json({
+        message: 'Captain already exists',
+      });
+    }
+
+    const hashedPassword = await captainModel.hashPassword(password);
+
+    const captain = await captainService.createCaptain({
+      firstname: fullname.firstname,
+      lastname: fullname.lastname,
+      email: emailLower,
+      password: hashedPassword,
+      color: vehicle.color,
+      plate: vehicle.plate,
+      capacity: vehicle.capacity,
+      vehicleType: vehicle.vehicleType,
+    });
+
+    const otp = generateOtp();
+
+    const otpHash = await bcrypt.hash(otp, 10);
+
+    await otpModel.create({
+      email: emailLower,
+      user: captain._id,
+      otpHash,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    });
+
+    await sendEmail(
+      emailLower,
+      'Captain Email Verification',
+      `Your OTP is ${otp}`,
+      getOtpHtml(otp)
+    );
+
+    return res.status(201).json({
+      message: 'Captain registered successfully',
+      captain: {
+        fullname: captain.fullname,
+        email: captain.email,
+      },
+      verified: captain.verified,
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: 'Server error',
+    });
   }
-
-  const { fullname, email, password, vehicle } = req.body;
-  const emailLower = email.toLowerCase();
-  const isCaptainAlreadyExist = await captainModel.findOne({
-    email: emailLower,
-  });
-
-  if (isCaptainAlreadyExist) {
-    return res.status(400).json({ message: 'Captain already exist' });
-  }
-
-  const hashedPassword = await captainModel.hashPassword(password);
-
-  const captain = await captainService.createCaptain({
-    firstname: fullname.firstname,
-    lastname: fullname.lastname,
-    email: emailLower,
-
-    password: hashedPassword,
-    color: vehicle.color,
-    plate: vehicle.plate,
-    capacity: vehicle.capacity,
-    vehicleType: vehicle.vehicleType,
-  });
-
-  const token = captain.generateAuthToken();
-
-  res.status(201).json({ token, captain });
 };
+
 module.exports.loginCaptain = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -54,6 +96,12 @@ module.exports.loginCaptain = async (req, res, next) => {
   }
 
   const isMatch = await captain.comparePassword(password);
+
+  if (!captain.verified) {
+  return res.status(401).json({
+    message: 'Email not verified',
+  });
+}
 
   if (!isMatch) {
     return res.status(401).json({ message: 'Invalid email or password' });
@@ -78,4 +126,125 @@ module.exports.logoutCaptain = async (req, res, next) => {
   res.clearCookie('token');
 
   res.status(200).json({ message: 'Logout successfully' });
+};
+
+
+module.exports.verifyCaptainEmail = async (req, res) => {
+  try {
+    const { otp, email } = req.body;
+
+    if (!otp || !email) {
+      return res.status(400).json({
+        message: 'OTP and email are required',
+      });
+    }
+
+    const otpDoc = await otpModel
+      .findOne({
+        email: email.toLowerCase().trim(),
+      })
+      .sort({ createdAt: -1 });
+
+    if (!otpDoc) {
+      return res.status(400).json({
+        message: 'Invalid OTP',
+      });
+    }
+
+    if (otpDoc.expiresAt && otpDoc.expiresAt < new Date()) {
+      await otpModel.deleteOne({ _id: otpDoc._id });
+
+      return res.status(400).json({
+        message: 'OTP has expired',
+      });
+    }
+
+    const isMatch = await bcrypt.compare(
+      otp.trim(),
+      otpDoc.otpHash
+    );
+
+    if (!isMatch) {
+      return res.status(400).json({
+        message: 'Invalid OTP',
+      });
+    }
+
+    const captain = await captainModel.findByIdAndUpdate(
+      otpDoc.user,
+      {
+        verified: true,
+      },
+      {
+        new: true,
+      }
+    );
+
+    await otpModel.deleteMany({
+      user: otpDoc.user,
+    });
+
+    return res.status(200).json({
+      message: 'Captain verified successfully',
+      captain: {
+        fullname: captain.fullname,
+        email: captain.email,
+        verified: captain.verified,
+      },
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: 'Server error',
+    });
+  }
+};
+
+module.exports.resendCaptainOtp = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const captain = await captainModel.findOne({
+      email: email.toLowerCase(),
+    });
+
+    if (!captain) {
+      return res.status(404).json({
+        message: 'Captain not found',
+      });
+    }
+
+    const otp = generateOtp();
+
+    const otpHash = await bcrypt.hash(otp, 10);
+
+    await otpModel.deleteMany({
+      email: email.toLowerCase(),
+    });
+
+    await otpModel.create({
+      email: email.toLowerCase(),
+      user: captain._id,
+      otpHash,
+      expiresAt: new Date(Date.now() + 10 * 60 * 1000),
+    });
+
+    await sendEmail(
+      email,
+      'Captain Verification OTP',
+      `Your OTP is ${otp}`,
+      getOtpHtml(otp)
+    );
+
+    return res.status(200).json({
+      message: 'OTP resent successfully',
+    });
+  } catch (error) {
+    console.error(error);
+
+    return res.status(500).json({
+      message: 'Server error',
+    });
+  }
 };
