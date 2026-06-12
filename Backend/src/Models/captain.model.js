@@ -2,15 +2,8 @@ const mongoose = require('mongoose');
 
 const captainSchema = new mongoose.Schema({
   fullname: {
-    firstname: {
-      type: String,
-      required: true,
-      minlength: 3,
-    },
-    lastname: {
-      type: String,
-      minlength: 3,
-    },
+    firstname: { type: String, required: true, minlength: 3 },
+    lastname: { type: String, minlength: 3 },
   },
 
   email: {
@@ -26,9 +19,7 @@ const captainSchema = new mongoose.Schema({
     select: false,
   },
 
-  refreshToken: {
-    type: String,
-  },
+  refreshToken: String,
 
   verified: {
     type: Boolean,
@@ -44,18 +35,9 @@ const captainSchema = new mongoose.Schema({
   },
 
   vehicle: {
-    color: {
-      type: String,
-      required: true,
-    },
-    plate: {
-      type: String,
-      required: true,
-    },
-    capacity: {
-      type: Number,
-      required: true,
-    },
+    color: { type: String, required: true },
+    plate: { type: String, required: true },
+    capacity: { type: Number, required: true },
     vehicleType: {
       type: String,
       enum: ['car', 'motorcycle', 'auto'],
@@ -70,5 +52,5 @@ const captainSchema = new mongoose.Schema({
 });
 
 
-
-module.exports = mongoose.model('Captain', captainSchema);
+module.exports =
+  mongoose.models.Captain || mongoose.model('Captain', captainSchema);

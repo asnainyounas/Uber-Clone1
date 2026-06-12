@@ -32,13 +32,13 @@ async function register(req, res) {
 
     const otp = generateOtp();
     const html = getOtpHtml(otp);
-
     const otpHash = await bcrypt.hash(otp, 10);
 
     await otpModel.create({
-      email,
-      user: user._id,
+      email: email.toLowerCase().trim(),
       otpHash,
+      ownerId: user._id,
+      ownerType: 'User',
     });
 
     await sendEmail(email, 'OTP Verification', `Your OTP code is ${otp}`, html);
@@ -99,7 +99,6 @@ async function login(req, res) {
     );
 
     const hashedToken = await bcrypt.hash(refreshToken, 10);
-
     session.refreshTokenHash = hashedToken;
     await session.save();
 
@@ -131,6 +130,7 @@ async function login(req, res) {
 async function getUserProfile(req, res, next) {
   res.status(200).json(req.user);
 }
+
 async function getMe(req, res) {
   const token = req.headers.authorization?.split(' ')[1];
 
@@ -346,16 +346,14 @@ async function verifyEmail(req, res) {
       return res.status(400).json({ message: 'OTP and email are required' });
     }
 
-    // normalize email to match what's stored
     const otpDoc = await otpModel
       .findOne({ email: email.toLowerCase().trim() })
-      .sort({ createdAt: -1 }); // get most recent OTP
+      .sort({ createdAt: -1 });
 
     if (!otpDoc) {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    // safe expiry check only if field exists
     if (otpDoc.expiresAt && otpDoc.expiresAt < new Date()) {
       await otpModel.deleteOne({ _id: otpDoc._id });
       return res.status(400).json({ message: 'OTP has expired' });
@@ -367,20 +365,31 @@ async function verifyEmail(req, res) {
       return res.status(400).json({ message: 'Invalid OTP' });
     }
 
-    const user = await userModel.findByIdAndUpdate(
-      otpDoc.user,
-      { verified: true },
-      { new: true }
-    );
+    // Use ownerType to determine which model to update
+    let updatedOwner;
+    if (otpDoc.ownerType === 'User') {
+      updatedOwner = await userModel.findByIdAndUpdate(
+        otpDoc.ownerId,
+        { verified: true },
+        { new: true }
+      );
+    } else if (otpDoc.ownerType === 'Captain') {
+      const captainModel = require('../Models/captain.model');
+      updatedOwner = await captainModel.findByIdAndUpdate(
+        otpDoc.ownerId,
+        { verified: true },
+        { new: true }
+      );
+    }
 
-    await otpModel.deleteMany({ user: otpDoc.user });
+    await otpModel.deleteMany({ ownerId: otpDoc.ownerId, ownerType: otpDoc.ownerType });
 
     return res.status(200).json({
       message: 'Email verified successfully',
       user: {
-        fullname: user.fullname,
-        email: user.email,
-        verified: user.verified,
+        fullname: updatedOwner.fullname,
+        email: updatedOwner.email,
+        verified: updatedOwner.verified,
       },
     });
   } catch (err) {
@@ -404,15 +413,15 @@ async function resendOtp(req, res) {
     }
 
     const otp = generateOtp();
-
     const otpHash = await bcrypt.hash(otp, 10);
 
-    await otpModel.deleteMany({ email });
+    await otpModel.deleteMany({ email: email.toLowerCase().trim() });
 
     await otpModel.create({
-      email,
-      user: user._id,
+      email: email.toLowerCase().trim(),
       otpHash,
+      ownerId: user._id,
+      ownerType: 'User',
       expiresAt: new Date(Date.now() + 10 * 60 * 1000),
     });
 
@@ -428,7 +437,6 @@ async function resendOtp(req, res) {
     });
   } catch (error) {
     console.error(error);
-
     res.status(500).json({
       message: 'Server error',
     });
@@ -446,5 +454,3 @@ module.exports = {
   getUserProfile,
   resendOtp,
 };
-
-//verify token ,find user ,find session, validate,(Not critical, but cleaner logic)//
