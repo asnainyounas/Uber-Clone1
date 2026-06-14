@@ -6,6 +6,7 @@ const sessionModel = require('../Models/session.model');
 const { sendEmail } = require('../services/email.service');
 const { generateOtp, getOtpHtml } = require('../utils/utils.js');
 const otpModel = require('../Models/otp.model');
+const axios = require('axios');
 
 async function register(req, res) {
   try {
@@ -112,6 +113,15 @@ async function login(req, res) {
       sameSite: 'strict',
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
+
+  axios.post(
+  "https://asnainyounas.app.n8n.cloud/webhook-test/User-login",
+  {
+    name: user.fullname.firstname,
+    email: user.email,
+    role: "user"
+  }
+).catch(console.error);
 
     return res.status(200).send({
       message: 'login successful',
