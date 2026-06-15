@@ -95,6 +95,7 @@ module.exports.loginCaptain = async (req, res) => {
       return res.status(401).json({ message: 'Email not verified' });
     }
 
+   
     const isMatch = await captain.comparePassword(password);
 
     if (!isMatch) {

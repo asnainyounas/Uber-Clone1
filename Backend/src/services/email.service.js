@@ -4,15 +4,12 @@ const config = require('../config/config');
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    type: 'OAuth2',
-    user: config.GOOGLE_USER,
-    clientId: config.GOOGLE_CLIENT_ID,
-    clientSecret: config.GOOGLE_CLIENT_SECRET,
-    refreshToken: config.GOOGLE_REFRESH_TOKEN,
+    user: config.GOOGLE_USER, // your Gmail address
+    pass: config.GOOGLE_PASSWORD, // Gmail App Password (16-digit)
   },
 });
 
-// Verify the connection configuration
+// Verify connection
 transporter.verify((error, success) => {
   if (error) {
     console.error('Error connecting to email server:', error);
@@ -24,15 +21,14 @@ transporter.verify((error, success) => {
 const sendEmail = async (to, subject, text, html) => {
   try {
     const info = await transporter.sendMail({
-      from: `"Your Name" <${config.GOOGLE_USER}>`, // sender address
-      to, // list of receivers
-      subject, // Subject line
-      text, // plain text body
-      html, // html body
+      from: `"Your Name" <${config.GOOGLE_USER}>`,
+      to,
+      subject,
+      text,
+      html,
     });
 
     console.log('Message sent: %s', info.messageId);
-    console.log('Preview URL: %s', nodemailer.getTestMessageUrl(info));
   } catch (error) {
     console.error('Error sending email:', error);
   }

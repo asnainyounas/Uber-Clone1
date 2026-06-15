@@ -10,11 +10,11 @@ module.exports.authUser = async (req, res, next) => {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  const isBlacklisted = await blackListTokenModel.findOne({ token: token });
+  // const isBlacklisted = await blackListTokenModel.findOne({ token: token });
 
-  if (isBlacklisted) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+  // if (isBlacklisted) {
+  //   return res.status(401).json({ message: 'Unauthorized' });
+  // }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
@@ -35,11 +35,11 @@ module.exports.authCaptain = async (req, res, next) => {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
-  const isBlacklisted = await blackListTokenModel.findOne({ token: token });
+  // const isBlacklisted = await blackListTokenModel.findOne({ token: token });
 
-  if (isBlacklisted) {
-    return res.status(401).json({ message: 'Unauthorized' });
-  }
+  // if (isBlacklisted) {
+  //   return res.status(401).json({ message: 'Unauthorized' });
+  // }
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
