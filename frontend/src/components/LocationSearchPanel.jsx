@@ -1,36 +1,42 @@
-import React from 'react'
+const LocationSearchPanel = ({
+  suggestions,
+  setVehiclePanel,
+  setPanelOpen,
+  setPickup,
+  setDestination,
+  activeField,
+}) => {
+  const handleSuggestionClick = (suggestion) => {
+    if (activeField === 'pickup') {
+      setPickup(suggestion);
+    } else if (activeField === 'destination') {
+      setDestination(suggestion);
+    }
+    setVehiclePanel(true);
+    setPanelOpen(false);
+  };
 
-const LocationSearchPanel = (props) => {
-    
-    const Location=[
-        " Asnain khan location saddar",
-        " Asnain khan location gulberg",
-        " Asnain khan location karak",
-        " Asnain khan location pesahwar",
-    ]
   return (
-    <div onClick={()=>{
-        props.setVehiclePanel(true)
-        props.setPanelOpen(false)
-    }}>
-        {
-            Location.map(function(elem,idx){
-                  return  <div key={idx} className='flex items-center border-2 p-3 border-gray-100 active:border-black rounded-xl gap-4 my-2 justify-start'>
-            <h2 className='flex items-center justify-center w-11 rounded-full h-8 bg-[#eee]'>
-                <i className="ri-focus-3-line text-xl"></i>
-            </h2>
-            <h4 className='font-medium'>
-                {elem}
-            </h4>
-        </div>
-            })
+    <div>
+      {suggestions.map((elem, index) => {
+        const text = typeof elem === 'string' ? elem : elem.description;
 
-            
-        }
-       
+        return (
+          <div
+            key={index}
+            onClick={() => handleSuggestionClick(text)}
+            className="flex items-center border-2 border-gray-50 justify-start gap-4 rounded-xl p-3 my-2"
+          >
+            <div className="shrink-0 bg-[#eee] h-8 w-8 flex items-center justify-center rounded-full">
+              <i className="ri-map-pin-fill"></i>
+            </div>
 
+            <h4 className="font-medium truncate">{text}</h4>
+          </div>
+        );
+      })}
     </div>
-  )
-}
+  );
+};
 
-export default LocationSearchPanel
+export default LocationSearchPanel;

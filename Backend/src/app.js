@@ -6,8 +6,12 @@ const express = require('express');
 const path = require('path');
 const app = express();
 const cookieParser = require('cookie-parser');
+
+// Routes
 const userRoutes = require('./routes/auth.routes');
 const captainRoutes = require('./routes/captain.routes');
+const mapsRoutes = require('./routes/maps.routes');
+const ridesRoutes = require('./routes/ride.routes');
 
 app.use(cors());
 app.use(express.json());
@@ -16,10 +20,12 @@ app.use(cookieParser());
 app.use(morgan('dev'));
 
 app.get('/', (req, res) => {
-  res.send('hello');
+  res.send("Backend API is running");
 });
-app.use('/users', userRoutes);
 
+app.use('/users', userRoutes);
 app.use('/captains', captainRoutes);
+app.use('/maps', mapsRoutes);
+app.use('/rides', ridesRoutes);
 
 module.exports = app;

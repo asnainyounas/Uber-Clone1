@@ -1,47 +1,90 @@
-import React from 'react'
+import React from 'react';
 
 const VehiclePanel = (props) => {
   return (
     <div>
-         <h5 onClick={()=>{
-        props.setVehiclePanel(false)
-        }} className="p-3  text-center top-0 absolute w-[93%]"><i className="text-3xl text-gray-300 ri-arrow-down-wide-line"></i></h5>
-        <h3 className="font-semibold text-2xl mb-5">Choose a Vehicle</h3>
-        <div onClick={()=>{
-            props.setConfirmRidePanel(true)
-        }} className="flex border mb-3 active:border-black  rounded-xl p-3 items-center justify-between w-full ">
-          <img className="h-12" src="https://www.pngplay.com/wp-content/uploads/8/Uber-PNG-Photos.png" alt="" />
-          <div className="-ml-2 w-1/2">
-            <h4 className="font-medium text-base"> UberGo<span><i className="ri-user-3-fill"></i>4</span></h4>
-              <h5 className="font-medium text-sm">2 mins away</h5>
-              <p className="font-normal text-xs">Affordable, compact Rides</p>
-          </div>
-             <h2 className="text-xl font-semibold">$434</h2>
+      <h5
+        onClick={() => props.setVehiclePanel(false)}
+        className="p-1 absolute top-0 text-center w-[90%]"
+      >
+        <i className="text-3xl text-gray-300 ri-arrow-down-wide-fill"></i>
+      </h5>
+      <h2 className="text-2xl font-semibold mb-5">Choose a Vehicle</h2>
+      <div
+        onClick={() => {
+          props.setConfirmRidePanel(true);
+          props.setVehiclePanel(false);
+          props.selectVehicle('car');
+        }}
+        className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
+      >
+        <img
+          className="h-12"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6DQB8VsnMB2MmKSO6v128C2E1h-fUkWbxBXSGw1vSpw&s"
+          alt=""
+        />
+        <div className="ml-2 w-1/2">
+          <h4 className="font-medium text-base">
+            UberGo{' '}
+            <span>
+              <i className="ri-user-3-fill">4</i>
+            </span>
+          </h4>
+          <h4 className="font-medium text-sm">2 mins away</h4>
+          <p className="text-xs text-gray-600">Affordable, compact rides</p>
         </div>
-        <div onClick={()=>{
-            props.setConfirmRidePanel(true)
-        }} className="flex border mb-3 active:border-black  rounded-xl p-3 items-center justify-between w-full ">
-          <img className="h-12" src="https://tse4.mm.bing.net/th/id/OIP.VdrX-g7pOBwz9kKSQLrcCwHaHa?pid=Api&h=220&P=0" alt="" />
-          <div className="-ml-2 w-1/2">
-            <h4 className="font-medium text-base"> Moto<span><i className="ri-user-3-fill"></i>1</span></h4>
-              <h5 className="font-medium text-sm">3 mins away</h5>
-              <p className="font-normal text-xs">Affordable, Moto Rides</p>
-          </div>
-             <h2 className="text-xl font-semibold">$200</h2>
+        <h2 className="text-lg font-semibold">${props.fare.car}</h2>
+      </div>
+      <div
+        onClick={() => {
+          props.setConfirmRidePanel(true);
+          props.selectVehicle('bike');
+        }}
+        className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
+      >
+        <img
+          className="h-12"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVjRAoYVgWlss_HyVwOUPTcZdzRvnPNNUg7w&s"
+          alt=""
+        />
+        <div className="ml-2 w-1/2">
+          <h4 className="font-medium text-base">
+            Moto{' '}
+            <span>
+              <i className="ri-user-3-fill">1</i>
+            </span>
+          </h4>
+          <h4 className="font-medium text-sm">3 mins away</h4>
+          <p className="text-xs text-gray-600">Affordable, motorcycles rides</p>
         </div>
-        <div onClick={()=>{
-            props.setConfirmRidePanel(true)
-        }} className="flex border mb-3 active:border-black  rounded-xl p-3 items-center justify-between w-full ">
-          <img className="h-12" src="https://clipart-library.com/2023/Uber_Auto_312x208_pixels_Mobile.png" alt="" />
-          <div className="-ml-2 w-1/2">
-            <h4 className="font-medium text-base"> Auto<span><i className="ri-user-3-fill"></i>4</span></h4>
-              <h5 className="font-medium text-sm">4 mins away</h5>
-              <p className="font-normal text-xs">Affordable, Auto Rides</p>
-          </div>
-             <h2 className="text-xl font-semibold">$250</h2>
+        <h2 className="text-lg font-semibold">${props.fare.bike}</h2>
+      </div>
+      <div
+        onClick={() => {
+          props.setConfirmRidePanel(true);
+          props.selectVehicle('auto');
+        }}
+        className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
+      >
+        <img
+          className="h-12"
+          src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6o89EzpWQuyHlR4xcLXzYQ3W3nifSnCHsCA&s"
+          alt=""
+        />
+        <div className="ml-2 w-1/2">
+          <h4 className="font-medium text-base">
+            UberAuto{' '}
+            <span>
+              <i className="ri-user-3-fill">3</i>
+            </span>
+          </h4>
+          <h4 className="font-medium text-sm">3 mins away</h4>
+          <p className="text-xs text-gray-600">Affordable, Auto rides</p>
         </div>
+        <h2 className="text-lg font-semibold">${props.fare.auto}</h2>
+      </div>
     </div>
-  )
-}
+  );
+};
 
-export default VehiclePanel
+export default VehiclePanel;

@@ -112,3 +112,109 @@ const UserLogin = () => {
 }
 
 export default UserLogin
+
+
+
+
+
+
+
+
+
+
+
+
+
+// NEW CODE
+
+// import axios from "axios";
+// import React, { useContext, useState } from "react";
+// import { data, Link, useNavigate } from "react-router-dom";
+// import { UserDataContext } from "../context/UserContext";
+
+// const UserLogin = () => {
+//   const [email, setEmail] = useState("");
+//   const [password, setPassword] = useState("");
+
+//   const { user, setUser } = useContext(UserDataContext);
+//   const navigate = useNavigate();
+
+//   const submitHandler = async (e) => {
+//     e.preventDefault();
+//     // setEmail("");
+//     // setPassword("");
+
+//     const userData = {
+//       email: email,
+//       password: password,
+//     };
+
+//     try {
+//       const response = await axios.post(
+//         `${import.meta.env.VITE_BASE_URL}/users/login`,
+//         userData,
+//       );
+
+//       if (response.status === 200) {
+//         setUser(response.data.user);
+//         localStorage.setItem('token', response.data.token);
+//         navigate("/home");
+//       }
+//     } catch (error) {
+//       console.error(error.response?.data || error.message);
+//     }
+//   };
+
+//   return (
+//     <div className="p-7 h-screen flex flex-col justify-between">
+//       <div>
+//         <img
+//           className="w-26 mb-8"
+//           src="https://download.logo.wine/logo/Uber/Uber-Logo.wine.png"
+//           alt="uber-logo"
+//         />
+//         <form onSubmit={submitHandler}>
+//           <h3 className="text-lg font-medium mb-2">What's your email</h3>
+//           <input
+//             type="email"
+//             required
+//             value={email}
+//             onChange={(e) => setEmail(e.target.value)}
+//             placeholder="email@example.com"
+//             className="bg-[#eeeeee] mb-7 rounded px-4 py-2 w-full text-lg placeholder:text-base"
+//           />
+//           <h3 className="text-lg font-medium mb-2">Enter Password</h3>
+//           <input
+//             type="password"
+//             required
+//             value={password}
+//             onChange={(e) => setPassword(e.target.value)}
+//             placeholder="password"
+//             className="bg-[#eeeeee] mb-7 rounded px-4 py-2 w-full text-lg placeholder:text-base"
+//           />
+//           <button className="bg-[#111] text-white font-semibold mb-2 rounded px-4 py-2 w-full text-lg placeholder:text-base">
+//             Login
+//           </button>
+//           <p className="text-center">
+//             New here?{" "}
+//             <Link to={"/signup"} className="text-blue-500">
+//               Create new Account
+//             </Link>
+//           </p>
+//         </form>
+//       </div>
+
+//       <div>
+//         <Link
+//           to={"/captain-login"}
+//           className="bg-[#10b461] flex items-center justify-center text-white font-semibold mb-2 rounded px-4 
+//           py-2 w-full text-lg placeholder:text-base"
+//         >
+//           Sign in as Captain
+//         </Link>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default UserLogin;

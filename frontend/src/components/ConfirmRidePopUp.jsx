@@ -1,72 +1,118 @@
-import React, { useState } from 'react'
-import { Link } from 'react-router-dom'
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import axios from 'axios';
 
-const ConfirmRidePopUp = (props) => {
-    
-      const [ otp, setOtp ] = useState('')
+const ConfirmRidePopup = (props) => {
+  const [otp, setOtp] = useState('');
 
-    const submitHandler = (e) => {
-        e.preventDefault()
+  const navigate = useNavigate();
+
+  const submitHandler = async (e) => {
+    e.preventDefault();
+    try {
+      const response = await axios.get(
+        `${import.meta.env.VITE_BASE_URL}/rides/start-ride`,
+        {
+          params: {
+            rideId: props.ride._id,
+            otp,
+          },
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem('token')}`,
+          },
+        }
+      );
+      console.log(response.data);
+      if (response.status === 200) {
+        props.setConfirmRidePopupPanel(false);
+        props.setRidePopupPanel(false);
+        navigate('/captain-riding', { state: { ride: props.ride } });
+      }
+    } catch (error) {
+      console.error(error);
     }
+  };
+
   return (
-     <div>
-        <h5 onClick={()=>{
-        props.setRidePopupPanel(false)
-        }} className="p-3  text-center top-0 absolute w-[93%]"><i className="text-3xl text-gray-300 ri-arrow-down-wide-line"></i></h5>
-        <h3 className="font-semibold text-2xl mb-5 mt-3">Confirm This Ride</h3>
-        <div className='items-center justify-between flex p-3 bg-yellow-300 rounded-lg mt-4'>
-            <div className='items-center gap-3 flex  '>
-                <img className='h-11 w-11 rounded-full object-cover' src="https://i.pinimg.com/736x/38/d0/af/38d0afa64756927b5a3107eb0599b829.jpg" alt="" />
-                <h2 className='text-gl font-medium'>Justin Degryse</h2>
-            </div>
-            <h5 className='text-lg font-semibold'>2.2km</h5>
+    <div>
+      <h5
+        onClick={() => props.setConfirmRidePopupPanel(false)}
+        className="p-1 absolute top-0 text-center w-[90%]"
+      >
+        <i className="text-3xl text-gray-300 ri-arrow-down-wide-fill"></i>
+      </h5>
+      <h2 className="text-2xl font-semibold mb-5">
+        Confirm this ride to start
+      </h2>
+
+      <div className="flex items-center justify-between p-3 bg-yellow-400 rounded-lg mt-4">
+        <div className="flex items-center gap-3">
+          <img
+            className="h-12 w-12  rounded-full object-cover"
+            src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSAp3Z1hXfTVTKtbw3vE75-rtfr1ZCFcPSw4A&s"
+            alt=""
+          />
+          <h4 className="text-lg font-medium">
+            {props.ride?.user?.fullname.firstname}
+          </h4>
         </div>
-        <div className='flex-col gap-2 flex justify-between itmes-center'>
-            
-       
-
-           <div className='w-full mt-5'>
-            
-              <div className='flex items-center gap-5 p-3 border-b-2'>
-                        <i className="ri-map-pin-user-fill"></i>
-                        <div>
-                            <h3 className='text-lg font-medium'>562/11-A</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>Asnain khan hone</p>
-                        </div>
-                
-          </div>
-            <div className='flex items-center gap-5 p-3 border-b-2'>
-              <i className="text-lg ri-map-pin-2-fill"></i>
-                        <div>
-                            <h3 className='text-lg font-medium'>562/11-A</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>sfs</p>
-                        </div>
-            </div>
-            <div className='flex items-center gap-5 p-3'>
-               <i className="ri-currency-line"></i>
-                        <div>
-                            <h3 className='text-lg font-medium'>₹34535</h3>
-                            <p className='text-sm -mt-1 text-gray-600'>Cash Cash</p>
-                        </div>
-            </div>
-            </div>
-      <div className='mt-6 w-full'>
-        <form onSubmit={(e)=>{
-            submitHandler(e)
-        }}>
-            <input value={otp} onChange={(e) => setOtp(e.target.value)}  className="bg-[#eee]  px-12 py-4 font-mono text-lg w-full mt-5 rounded-lg " type="text" placeholder='Enter OTP' />
-              <Link to={'/captain-riding'} className='w-full mt-5 flex justify-center text-white rounded-lg bg-green-600 p-2 font-semibold'>Confirm</Link>
-
-        <button onClick={()=>{
-             props.seConfirmRidePopupPanel(false)
-            props.setRidePopupPanel(false)
-
-        }} className='w-full mt-1 text-white rounded-lg bg-red-600 p-2 font-semibold'>Cancel</button>
-        </form>
       </div>
-        </div>
-    </div>
-  )
-}
 
-export default ConfirmRidePopUp
+      <div className="flex flex-col justify-between items-center">
+        <div className="w-full mt-5">
+          <div className="flex items-center gap-5 p-3 border-b-2 border-gray-100">
+            <i className="text-lg ri-map-pin-2-fill"></i>
+            <div>
+              <h3 className="text-lg font-medium">Pickup</h3>
+              <p className="text-sm -mt-1 text-gray-600">
+                {props.ride?.pickup}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-5 p-3 border-b-2 border-gray-100">
+            <i className="text-lg ri-map-pin-user-fill"></i>
+            <div>
+              <h3 className="text-lg font-medium">Destination</h3>
+              <p className="text-sm -mt-1 text-gray-600">
+                {props.ride?.destination}
+              </p>
+            </div>
+          </div>
+          <div className="flex items-center gap-5 p-3">
+            <i className="text-lg ri-currency-fill"></i>
+            <div>
+              <h3 className="text-lg font-medium">${props.ride?.fare}</h3>
+              <p className="text-sm -mt-1 text-gray-600">Cash Cash</p>
+            </div>
+          </div>
+        </div>
+
+        <div className="mt-6 w-full">
+          <form onSubmit={submitHandler}>
+            <input
+              className="bg-[#eee] px-8 py-3 mb-2 font-mono text-lg rounded-lg w-full mt-3"
+              type="text"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              placeholder="Enter OTP"
+            />
+            <button className="w-full mt-5 flex justify-center bg-green-600 text-white font-semibold p-3 rounded-lg">
+              Accept
+            </button>
+
+            <button
+              onClick={() => {
+                props.setConfirmRidePopupPanel(false);
+              }}
+              className="w-full mt-1 bg-red-500 text-white font-semibold p-3 rounded-lg"
+            >
+              Cancel
+            </button>
+          </form>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ConfirmRidePopup;

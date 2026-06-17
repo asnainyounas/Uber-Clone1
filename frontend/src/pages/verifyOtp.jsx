@@ -228,7 +228,7 @@ const VerifyOtp = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-200 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-linear-to-br from-gray-50 to-gray-200 flex items-center justify-center px-4">
       <div className="w-full max-w-md bg-white rounded-3xl shadow-xl p-8">
         <div className="flex justify-center mb-6">
           <div className="w-16 h-16 bg-black rounded-full flex items-center justify-center">
