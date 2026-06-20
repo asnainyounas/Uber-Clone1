@@ -18,7 +18,7 @@ const LocationSearchPanel = ({
 
   return (
     <div>
-      {suggestions.map((elem, index) => {
+      {(suggestions || []).map((elem, index) => {
         const text = typeof elem === 'string' ? elem : elem.description;
 
         return (

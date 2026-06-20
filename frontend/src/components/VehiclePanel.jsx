@@ -1,6 +1,106 @@
+// import React from 'react';
+
+// const VehiclePanel = (props) => {
+//   return (
+//     <div>
+//       <h5
+//         onClick={() => props.setVehiclePanel(false)}
+//         className="p-1 absolute top-0 text-center w-[90%]"
+//       >
+//         <i className="text-3xl text-gray-300 ri-arrow-down-wide-fill"></i>
+//       </h5>
+//       <h2 className="text-2xl font-semibold mb-5">Choose a Vehicle</h2>
+//       <div
+//         onClick={() => {
+//           props.setConfirmRidePanel(true);
+//           props.setVehiclePanel(false);
+//           props.selectVehicle('car');
+//         }}
+//         className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
+//       >
+//         <img
+//           className="h-12"
+//           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6DQB8VsnMB2MmKSO6v128C2E1h-fUkWbxBXSGw1vSpw&s"
+//           alt=""
+//         />
+//         <div className="ml-2 w-1/2">
+//           <h4 className="font-medium text-base">
+//             UberGo{' '}
+//             <span>
+//               <i className="ri-user-3-fill">4</i>
+//             </span>
+//           </h4>
+//           <h4 className="font-medium text-sm">2 mins away</h4>
+//           <p className="text-xs text-gray-600">Affordable, compact rides</p>
+//         </div>
+//         <h2 className="text-lg font-semibold">${props.fare.car}</h2>
+//       </div>
+//       <div
+//         onClick={() => {
+//           props.setConfirmRidePanel(true);
+//           props.selectVehicle('bike');
+//         }}
+//         className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
+//       >
+//         <img
+//           className="h-12"
+//           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVjRAoYVgWlss_HyVwOUPTcZdzRvnPNNUg7w&s"
+//           alt=""
+//         />
+//         <div className="ml-2 w-1/2">
+//           <h4 className="font-medium text-base">
+//             Moto{' '}
+//             <span>
+//               <i className="ri-user-3-fill">1</i>
+//             </span>
+//           </h4>
+//           <h4 className="font-medium text-sm">3 mins away</h4>
+//           <p className="text-xs text-gray-600">Affordable, motorcycles rides</p>
+//         </div>
+//         <h2 className="text-lg font-semibold">${props.fare.bike}</h2>
+//       </div>
+//       <div
+//         onClick={() => {
+//           props.setConfirmRidePanel(true);
+//           props.selectVehicle('auto');
+//         }}
+//         className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
+//       >
+//         <img
+//           className="h-12"
+//           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6o89EzpWQuyHlR4xcLXzYQ3W3nifSnCHsCA&s"
+//           alt=""
+//         />
+//         <div className="ml-2 w-1/2">
+//           <h4 className="font-medium text-base">
+//             UberAuto{' '}
+//             <span>
+//               <i className="ri-user-3-fill">3</i>
+//             </span>
+//           </h4>
+//           <h4 className="font-medium text-sm">3 mins away</h4>
+//           <p className="text-xs text-gray-600">Affordable, Auto rides</p>
+//         </div>
+//         <h2 className="text-lg font-semibold">${props.fare.auto}</h2>
+//       </div>
+//     </div>
+//   );
+// };
+
+// export default VehiclePanel;
+
+
+
+
+
+
+
 import React from 'react';
 
 const VehiclePanel = (props) => {
+  // ✅ SAFE DEFAULT to prevent crash
+  const fare = props.fare || {};
+
   return (
     <div>
       <h5
@@ -9,7 +109,12 @@ const VehiclePanel = (props) => {
       >
         <i className="text-3xl text-gray-300 ri-arrow-down-wide-fill"></i>
       </h5>
-      <h2 className="text-2xl font-semibold mb-5">Choose a Vehicle</h2>
+
+      <h2 className="text-2xl font-semibold mb-5">
+        Choose a Vehicle
+      </h2>
+
+      {/* CAR */}
       <div
         onClick={() => {
           props.setConfirmRidePanel(true);
@@ -21,8 +126,9 @@ const VehiclePanel = (props) => {
         <img
           className="h-12"
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT6DQB8VsnMB2MmKSO6v128C2E1h-fUkWbxBXSGw1vSpw&s"
-          alt=""
+          alt="car"
         />
+
         <div className="ml-2 w-1/2">
           <h4 className="font-medium text-base">
             UberGo{' '}
@@ -31,13 +137,21 @@ const VehiclePanel = (props) => {
             </span>
           </h4>
           <h4 className="font-medium text-sm">2 mins away</h4>
-          <p className="text-xs text-gray-600">Affordable, compact rides</p>
+          <p className="text-xs text-gray-600">
+            Affordable, compact rides
+          </p>
         </div>
-        <h2 className="text-lg font-semibold">${props.fare.car}</h2>
+
+        <h2 className="text-lg font-semibold">
+          ${fare.car || 0}
+        </h2>
       </div>
+
+      {/* BIKE */}
       <div
         onClick={() => {
           props.setConfirmRidePanel(true);
+          props.setVehiclePanel(false);
           props.selectVehicle('bike');
         }}
         className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
@@ -45,8 +159,9 @@ const VehiclePanel = (props) => {
         <img
           className="h-12"
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTVjRAoYVgWlss_HyVwOUPTcZdzRvnPNNUg7w&s"
-          alt=""
+          alt="bike"
         />
+
         <div className="ml-2 w-1/2">
           <h4 className="font-medium text-base">
             Moto{' '}
@@ -55,13 +170,21 @@ const VehiclePanel = (props) => {
             </span>
           </h4>
           <h4 className="font-medium text-sm">3 mins away</h4>
-          <p className="text-xs text-gray-600">Affordable, motorcycles rides</p>
+          <p className="text-xs text-gray-600">
+            Affordable, motorcycle rides
+          </p>
         </div>
-        <h2 className="text-lg font-semibold">${props.fare.bike}</h2>
+
+        <h2 className="text-lg font-semibold">
+          ${fare.bike || 0}
+        </h2>
       </div>
+
+      {/* AUTO */}
       <div
         onClick={() => {
           props.setConfirmRidePanel(true);
+          props.setVehiclePanel(false);
           props.selectVehicle('auto');
         }}
         className="w-full border-gray-200 border-2 mb-2 rounded-lg active:border-black flex p-3 items-center justify-between"
@@ -69,8 +192,9 @@ const VehiclePanel = (props) => {
         <img
           className="h-12"
           src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcS6o89EzpWQuyHlR4xcLXzYQ3W3nifSnCHsCA&s"
-          alt=""
+          alt="auto"
         />
+
         <div className="ml-2 w-1/2">
           <h4 className="font-medium text-base">
             UberAuto{' '}
@@ -79,9 +203,14 @@ const VehiclePanel = (props) => {
             </span>
           </h4>
           <h4 className="font-medium text-sm">3 mins away</h4>
-          <p className="text-xs text-gray-600">Affordable, Auto rides</p>
+          <p className="text-xs text-gray-600">
+            Affordable auto rides
+          </p>
         </div>
-        <h2 className="text-lg font-semibold">${props.fare.auto}</h2>
+
+        <h2 className="text-lg font-semibold">
+          ${fare.auto || 0}
+        </h2>
       </div>
     </div>
   );
