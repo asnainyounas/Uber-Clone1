@@ -64,15 +64,7 @@ captainSchema.pre('save', async function (next) {
   next();
 });
 
-captainSchema.methods.generateAuthToken = function () {
-  const token = jwt.sign(
-    { _id: this._id, email: this.email },
-    process.env.JWT_SECRET,
-    { expiresIn: '7d' }
-  );
 
-  return token;
-};
 
 module.exports =
   mongoose.models.Captain || mongoose.model('Captain', captainSchema);

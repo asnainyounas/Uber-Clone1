@@ -66,10 +66,10 @@ const [ ridePopupPanel, setRidePopupPanel ] = useState(true)
        <CaptainDetails/>
        </div>
        <div ref={ridePopupPanelRef}  className="fixed w-full z-10 bottom-0   px-3 py-7  pt-12 bg-white">
-       <RidePopUp setRidePopupPanel={setRidePopupPanel} seConfirmRidePopupPanel={setConfirmRidePopupPanel}/>
+       <RidePopUp setRidePopupPanel={setRidePopupPanel} setConfirmRidePopupPanel={setConfirmRidePopupPanel}/>
       </div>
        <div ref={confirmRidePopupPanelRef}  className="fixed w-full h-screen z-10 bottom-0   px-3 py-7  pt-12 bg-white">
-       <ConfirmRidePopUp seConfirmRidePopupPanel={setConfirmRidePopupPanel} setRidePopupPanel={setRidePopupPanel} />
+       <ConfirmRidePopUp setConfirmRidePopupPanel={setConfirmRidePopupPanel} setRidePopupPanel={setRidePopupPanel} />
       </div>
       
     </div>

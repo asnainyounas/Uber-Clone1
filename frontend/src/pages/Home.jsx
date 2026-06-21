@@ -97,7 +97,7 @@ const Home = () => {
       <div className="h-screen w-screen">
         <img
           className="h-full w-full object-cover"
-          src="https://miro.medium.com/max/1280/0*gwMx05pqII5hbfm.gif"
+          src="https://miro.medium.com/max/1280/0*gwMx05pqII5hbfmX.gif"
           alt=""
         />
       </div>

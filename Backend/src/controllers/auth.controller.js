@@ -89,6 +89,7 @@ async function login(req, res) {
     const session = await sessionModel.create({
       user: user._id,
       ip: req.ip,
+      userType: 'User',
       userAgent: req.headers['user-agent'],
       refreshTokenHash: 'temp',
     });

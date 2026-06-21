@@ -4,8 +4,14 @@ const sessionSchema = new mongoose.Schema(
   {
     user: {
       type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
       required: [true, 'User is required'],
+      refPath: 'userType',
+    },
+
+    userType: {
+      type: String,
+      required: [true, 'User type is required'],
+      enum: ['User', 'Captain'],
     },
 
     ip: {

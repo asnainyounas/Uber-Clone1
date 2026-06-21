@@ -2,11 +2,13 @@ const captainModel = require('../Models/captain.model');
 const captainService = require('../services/captain.service');
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
+const config = require('../config/config.js');
+const sessionModel = require('../Models/session.model');
 const otpModel = require('../Models/otp.model');
 const { sendEmail } = require('../services/email.service');
 const { generateOtp, getOtpHtml } = require('../utils/utils');
 const axios = require('axios');
-
 
 // ---------------- REGISTER CAPTAIN ----------------
 module.exports.registerCaptain = async (req, res) => {
@@ -26,13 +28,11 @@ module.exports.registerCaptain = async (req, res) => {
       return res.status(409).json({ message: 'Captain already exists' });
     }
 
-    const hashedPassword = await bcrypt.hash(password, 10);
-
     const captain = await captainService.createCaptain({
       firstname: fullname.firstname,
       lastname: fullname.lastname,
       email: emailLower,
-      password: hashedPassword,
+      password: password,
       color: vehicle.color,
       plate: vehicle.plate,
       capacity: vehicle.capacity,
@@ -73,6 +73,7 @@ module.exports.registerCaptain = async (req, res) => {
 };
 
 // ---------------- LOGIN CAPTAIN ----------------
+// ---------------- LOGIN CAPTAIN ----------------
 module.exports.loginCaptain = async (req, res) => {
   try {
     const errors = validationResult(req);
@@ -95,27 +96,60 @@ module.exports.loginCaptain = async (req, res) => {
       return res.status(401).json({ message: 'Email not verified' });
     }
 
-   
     const isMatch = await captain.comparePassword(password);
 
     if (!isMatch) {
       return res.status(401).json({ message: 'Invalid email or password' });
     }
 
-    const token = captain.generateAuthToken();
+    const session = await sessionModel.create({
+      user: captain._id,
+      userType: 'Captain',
+      ip: req.ip,
+      userAgent: req.headers['user-agent'],
+      refreshTokenHash: 'temp',
+    });
 
-    res.cookie('token', token);
+    const refreshToken = jwt.sign(
+      { id: captain._id, sessionId: session._id },
+      config.JWT_REFRESH_TOKEN,
+      { expiresIn: '7d' }
+    );
+
+    const hashedToken = await bcrypt.hash(refreshToken, 10);
+    session.refreshTokenHash = hashedToken;
+    await session.save();
+
+    const accessToken = jwt.sign(
+      { id: captain._id },
+      config.JWT_ACCESS_TOKEN,
+      { expiresIn: '15m' }
+    );
+
+    res.cookie('refreshToken', refreshToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'strict',
+      maxAge: 7 * 24 * 60 * 60 * 1000,
+    });
 
     axios.post(
-  "https://asnainyounas.app.n8n.cloud/webhook-test/User-login",
-  {
-    name: captain.fullname.firstname,
-    email: captain.email,
-    role: "captain"
-  }
-).catch(console.error);
+      "https://asnainyounas.app.n8n.cloud/webhook-test/User-login",
+      {
+        name: captain.fullname.firstname,
+        email: captain.email,
+        role: "captain"
+      }
+    ).catch(console.error);
 
-    return res.status(200).json({ token, captain });
+    return res.status(200).json({
+      message: 'login successful',
+      captain: {
+        fullname: captain.fullname,
+        email: captain.email,
+      },
+      accessToken,
+    });
 
   } catch (error) {
     console.error(error);
