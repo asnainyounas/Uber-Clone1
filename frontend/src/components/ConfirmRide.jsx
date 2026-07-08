@@ -1,10 +1,11 @@
 import React from 'react';
 
 const ConfirmRide = (props) => {
+  // console.log(props.fare.fares, 'confrimride');
   return (
     <div>
       <h5
-        onClick={() => props.setConfirmRidePanel(false)}
+        onClick={() => props.setConfirmRide(false)}
         className="p-1 absolute top-0 text-center w-[90%]"
       >
         <i className="text-3xl text-gray-300 ri-arrow-down-wide-fill"></i>
@@ -35,7 +36,9 @@ const ConfirmRide = (props) => {
             <i className="text-lg ri-currency-fill"></i>
             <div>
               <h3 className="text-lg font-medium">
-                ${props.fare[props.vehicleType]}
+                <p className="text-lg font-semibold">
+                  ${props?.fare?.fares?.[props?.vehicleType] ?? 0}
+                </p>
               </h3>
               <p className="text-sm -mt-1 text-gray-600">Cash Payment</p>
             </div>
@@ -45,7 +48,7 @@ const ConfirmRide = (props) => {
         <button
           onClick={() => {
             props.setVehicleFound(true);
-            props.setConfirmRidePanel(false);
+            props.setConfirmRide(false);
             props.createRide();
           }}
           className="w-full mt-5 bg-green-600 text-white font-semibold p-2 rounded-lg"

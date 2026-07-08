@@ -115,14 +115,19 @@ async function login(req, res) {
       maxAge: 7 * 24 * 60 * 60 * 1000,
     });
 
-  axios.post(
-  "https://asnainyounas.app.n8n.cloud/webhook-test/User-login",
-  {
-    name: user.fullname.firstname,
-    email: user.email,
-    role: "user"
-  }
-).catch(console.error);
+    try {
+      await axios.post(
+        'https://asnainyounas.app.n8n.cloud/webhook-test/User-login',
+        {
+          name: user.fullname.firstname,
+          email: user.email,
+          role: 'user',
+        }
+      );
+    } catch (error) {
+      console.log('n8n status:', error.response?.status);
+      console.log('n8n Message:', error.response?.data?.message || error.message);
+    }
 
     return res.status(200).send({
       message: 'login successful',
@@ -393,7 +398,10 @@ async function verifyEmail(req, res) {
       );
     }
 
-    await otpModel.deleteMany({ ownerId: otpDoc.ownerId, ownerType: otpDoc.ownerType });
+    await otpModel.deleteMany({
+      ownerId: otpDoc.ownerId,
+      ownerType: otpDoc.ownerType,
+    });
 
     return res.status(200).json({
       message: 'Email verified successfully',

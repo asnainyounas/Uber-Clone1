@@ -1,8 +1,8 @@
 import React from 'react';
 
 const LookingForDriver = (props) => {
-  const fare = props.fare || {};
-  const vehicleType = props.vehicleType || "car";
+  const fare = props.fare.fares || {};
+  const vehicleType = props.vehicleType || 'car';
 
   return (
     <div>
@@ -13,9 +13,7 @@ const LookingForDriver = (props) => {
         <i className="text-3xl text-gray-300 ri-arrow-down-wide-fill"></i>
       </h5>
 
-      <h2 className="text-2xl font-semibold mb-5">
-        Looking for a Driver
-      </h2>
+      <h2 className="text-2xl font-semibold mb-5">Looking for a Driver</h2>
 
       <div className="flex flex-col justify-between items-center">
         <img
@@ -24,14 +22,13 @@ const LookingForDriver = (props) => {
         />
 
         <div className="w-full mt-5">
-
           {/* PICKUP */}
           <div className="flex items-center gap-5 p-3 border-b-2 border-gray-100">
             <i className="text-lg ri-map-pin-2-fill"></i>
             <div>
               <h3 className="text-lg font-medium">Pickup</h3>
               <p className="text-sm text-gray-600">
-                {props.pickup || "Not set"}
+                {props.pickup || 'Not set'}
               </p>
             </div>
           </div>
@@ -42,7 +39,7 @@ const LookingForDriver = (props) => {
             <div>
               <h3 className="text-lg font-medium">Destination</h3>
               <p className="text-sm text-gray-600">
-                {props.destination || "Not set"}
+                {props.destination || 'Not set'}
               </p>
             </div>
           </div>
@@ -51,15 +48,23 @@ const LookingForDriver = (props) => {
           <div className="flex items-center gap-5 p-3">
             <i className="text-lg ri-currency-fill"></i>
             <div>
-              <h3 className="text-lg font-medium">
-                ${fare[vehicleType] || 0}
-              </h3>
-              <p className="text-sm text-gray-600">
-                Cash Payment
-              </p>
+              <h3 className="text-lg font-medium">${fare[vehicleType] || 0}</h3>
+              <p className="text-sm text-gray-600">Cash Payment</p>
             </div>
           </div>
 
+          {/* OTP
+          <div className="flex items-center gap-5 p-3">
+            <i className="text-lg ri-lock-password-fill"></i>
+            <div>
+              <h3 className="text-lg font-medium">
+                {props.ride?.otp || 'Not set'}
+              </h3>
+              <p className="text-sm text-gray-600">OTP</p>
+            </div>
+          </div> */}
+
+          
         </div>
       </div>
     </div>

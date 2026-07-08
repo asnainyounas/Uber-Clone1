@@ -1,8 +1,9 @@
 const rideModel = require('../Models/ride.model');
 const mapService = require('../services/maps.service');
 const crypto = require('crypto');
+const { sendMessageToSocketId } = require('../../socket');
 
-async function getFare(pickup, destination) {
+module.exports.getFare = async (pickup, destination) => {
   if (!pickup || !destination) {
     throw new Error('Pickup and destination are required');
   }
@@ -18,10 +19,11 @@ async function getFare(pickup, destination) {
     car: Math.round(50 + distanceInKm * 12 + durationInMin * 2),
   };
 
-  return fares;
-}
-
-module.exports = getFare;
+  return {
+    fares,
+    duration: distanceTime.duration.text || '3 min',
+  };
+};
 
 function getOtp(num) {
   function generateOtp(num) {
@@ -43,14 +45,14 @@ module.exports.createRide = async ({
     throw new Error('All fields are required');
   }
 
-  const fare = await getFare(pickup, destination);
+  const fareData = await module.exports.getFare(pickup, destination);
 
   const ride = rideModel.create({
     user,
     pickup,
     destination,
     otp: getOtp(6),
-    fare: fare[vehicleType],
+    fare: fareData.fares[vehicleType],
   });
 
   return ride;
@@ -79,6 +81,8 @@ module.exports.confirmRide = async ({ rideId, captain }) => {
     throw new Error('Ride not found');
   }
 
+  sendMessageToSocketId(user.socketId, 'confirm-ride', ride);
+
   return ride;
 };
 
@@ -106,10 +110,7 @@ module.exports.startRide = async ({ rideId, otp, captain }) => {
 
   await rideModel.findByIdAndUpdate(ride._id, { status: 'ongoing' });
 
-  sendMessageToSocketId(ride.user.socketId, {
-    event: 'ride-started',
-    ride,
-  });
+  sendMessageToSocketId(user.socketId, 'ride-started', ride);
 
   return ride;
 };
@@ -140,7 +141,7 @@ module.exports.endRide = async ({ rideId, captain }) => {
 
   sendMessageToSocketId(ride.user.socketId, {
     event: 'ride-completed',
-    ride,
+    data: ride,
   });
 
   return ride;

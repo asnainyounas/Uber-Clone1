@@ -46,14 +46,12 @@ const initializeSocket = (server) => {
   });
 };
 
-function sendMessageToSocketId(socketId, message) {
+
+function sendMessageToSocketId(socketId, event, payload) {
   if (io) {
-    io.to(socketId).emit('message', message);
-  } else {
-    console.error('Socket.io not initialized');
+    io.to(socketId).emit(event, payload);
   }
 }
-
 module.exports = {
   initializeSocket,
   sendMessageToSocketId,
